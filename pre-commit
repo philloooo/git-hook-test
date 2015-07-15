@@ -1,53 +1,5 @@
-#!/usr/bin/env python
-
-from subprocess import Popen, PIPE
-import re
-
-SUSPICIOUS_FILENAME_EXTENSIONS = (
-    'rsa', 'dsa', '.private_key', '.psql_history', '.mysql_history',
-    '.pem', '.log', '.htpasswd', '.key', 'tblk' 
-)
-
-SUSPICIOUS_FILENAME_KEYWORDS = (
-    'opvn', 'keychain', 'password', 'backup', 'tblk', 'credentials'
-)
-
-SUSPICIOUS_CREDENTIALS = set(
-    [re.compile(regex, flags=re.IGNORECASE) for regex in [
-        '[\w]{40}', # aws secret key
-        '.*PRIVATE KEY.*', # rsa, ssl keys
-        '.*password.*', # literal 'password'
-        '.*phs[\d]{6}.*', # phsids
-    ]]
-)
-
-def run():
-    check_filenames()
-    check_code_diff()
-
-def check_code_diff():
-    '''
-    Check possible credentials for all newly added code lines
-    '''
-    added_code = Popen(["git", "diff", "--cached"], stdout=PIPE)
-    for code in added_code.stdout.readlines():
-        code = code.strip()
-        if code.startswith('+'):
-            if any(regex.match(code) for regex in SUSPICIOUS_CREDENTIALS):
-                print 'Found possible credentials: {}'.format(code)
-                exit(1)
-
-def check_filenames():
-    '''
-    Check all filenames if they have suspicious format
-    '''
-    filenames = Popen(["git", "diff", "--cached", "--name-only"], stdout=PIPE)
-    for name in filenames.stdout.readlines():
-        name = name.strip()
-        if name.endswith(SUSPICIOUS_FILENAME_EXTENSIONS)\
-                or any(keyword in name for keyword in SUSPICIOUS_FILENAME_KEYWORDS):
-            print 'filename {} has suspicious format'.format(name)
-            exit(1)
-
-
-run()
+#!/bin/bash
+directory=$(dirname "${BASH_SOURCE}")
+for script in $directory/pre-commits/*;
+    do $script
+done
