@@ -9,12 +9,16 @@ SUSPICIOUS_FILENAME_EXTENSIONS = (
 )
 
 SUSPICIOUS_FILENAME_KEYWORDS = (
-    'opvn','keychain', 'keychain', 'password', 'backup', 'tblk', 'credentials'
+    'opvn', 'keychain', 'password', 'backup', 'tblk', 'credentials'
 )
 
-SUSPICIOUS_CREDENTIALS = (
-    re.compile('[\w]{40}'), #aws secret key
-    re.compile('.*PRIVATE KEY.*'), # rsa, ssl keys
+SUSPICIOUS_CREDENTIALS = set(
+    [re.compile(regex, flags=re.IGNORECASE) for regex in [
+        '[\w]{40}', #aws secret key
+        '.*PRIVATE KEY.*', # rsa, ssl keys
+        '.*password.*',
+        '.*phs[\d]{6}', #phsids
+    ]]
 )
 
 def run():
