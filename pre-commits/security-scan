@@ -4,12 +4,12 @@ from subprocess import Popen, PIPE
 import re
 
 SUSPICIOUS_FILENAME_EXTENSIONS = (
-    'rsa', 'dsa', '.private_key', '.psql_history', '.mysql_history',
-    '.pem', '.log', '.htpasswd', '.key', 'tblk' 
+    b'rsa', b'dsa', b'.private_key', b'.psql_history', b'.mysql_history',
+    b'.pem', b'.log', b'.htpasswd', b'.key', b'tblk',
 )
 
 SUSPICIOUS_FILENAME_KEYWORDS = (
-    'opvn', 'keychain', 'password', 'backup', 'tblk', 'credentials'
+    b'opvn', b'keychain', b'password', b'backup', b'tblk', b'credentials',
 )
 
 SUSPICIOUS_CREDENTIALS = set(
@@ -34,7 +34,7 @@ def check_code_diff():
         code = code.strip()
         if code.startswith('+'):
             if any(regex.match(code) for regex in SUSPICIOUS_CREDENTIALS):
-                print 'Found possible credentials: {}'.format(code)
+                print('Found possible credentials: {}'.format(code))
                 exit(1)
 
 def check_filenames():
@@ -46,7 +46,7 @@ def check_filenames():
         name = name.strip()
         if name.endswith(SUSPICIOUS_FILENAME_EXTENSIONS)\
                 or any(keyword in name for keyword in SUSPICIOUS_FILENAME_KEYWORDS):
-            print 'filename {} has suspicious format'.format(name)
+            print('filename {} has suspicious format'.format(name))
             exit(1)
 
 
