@@ -1,8 +1,6 @@
-# example setup script that can be used for other services repos
-git clone https://github.com/NCI-GDC/git-hooks.git 
-cp -r git-hooks/*commits .git/hooks/
+#!/bin/bash
 
-# if you want to run all pre-commit scripts, copy pre-commit to .git/hooks
-cp git-hooks/pre-commit .git/hooks/
-
+#setup script that can be called from other services repos
+cp -r --backup=t git-hooks/hooks/* .git/hooks/ 
 rm -rf git-hooks
+echo "Git hooks successfully setup"

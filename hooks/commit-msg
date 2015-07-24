@@ -1,0 +1,6 @@
+#!/bin/bash
+exec < /dev/tty
+directory=$(dirname "${BASH_SOURCE}")
+for script in $directory/commit-msgs/*;
+    do $script $1
+done
